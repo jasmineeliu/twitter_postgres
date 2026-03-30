@@ -115,8 +115,16 @@ def insert_tweet(connection,tweet):
 
         # create/update the user
         sql = sqlalchemy.sql.text('''
-            ''')
-
+            INSERT INTO users
+            (id_users, created_at, ...)
+            VALUES
+            (:id_users, :created_at, ...)
+                                  ''')
+        #DONT DO THIS: ({TWEET['user']['id]}, {tweet['created_at']}, ...)
+        # DONT INSERT DATA AT THE PYTHON STRING LEVEL
+        res = connection.execute(sql, {
+            'id_users': tweet['user']['id']
+            })
         ########################################
         # insert into the tweets table
         ########################################
