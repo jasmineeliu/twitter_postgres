@@ -114,16 +114,6 @@ def insert_tweet(connection,tweet):
             user_id_urls = None
         else:
             user_id_urls = get_id_urls(tweet['user']['url'], connection)
-        sql=sqlalchemy.sql.text('''
-        SELECT id_users
-        FROM users
-        WHERE id_users = :id_users
-        ''')
-        res = connection.execute(sql,{
-            'id_users':tweet['user']['id'],
-        })
-        if res.first() is not None:
-            return
         # create/update the user
         sql = sqlalchemy.sql.text('''
             INSERT INTO users (
@@ -160,6 +150,7 @@ def insert_tweet(connection,tweet):
                 :description,
                 :withheld_in_countries
             )
+            ON CONFLICT (id_users) DO NOTHING
         ''')
         #DONT DO THIS: ({TWEET['user']['id]}, {tweet['created_at']}, ...)
         # DONT INSERT DATA AT THE PYTHON STRING LEVEL
